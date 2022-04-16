@@ -30,9 +30,15 @@ class Player(GameSprite):
         if keys_pressed[K_DOWN] and self.rect.y < 430:
             self.rect.y += self.speed
 
-rocket_l = Player('rocket.png', -25, 420, 10)
-rocket_r = Player('rocket.png', 650, 420, 10)
+rocket_l = Player('rocket.png', 0, 420, 10)
+rocket_r = Player('rocket.png', 620, 420, 10)
 ball = GameSprite('ball.png', 350, 350, 2)
+
+x_speed = 3
+y_speed = 3
+
+font.init()
+font = font.Font(None, 70)
 
 clock = time.Clock()
 FPS = 60
@@ -45,13 +51,28 @@ while game:
         if e.type == QUIT:
             game = False
     if finish != True:
-
         window.blit(background, (0, 0))
         rocket_l.reset()
         rocket_l.update_l()
         rocket_r.reset()
         rocket_r.update_r()
         ball.reset()
+
+        ball.rect.x += x_speed
+        ball.rect.y += y_speed
+
+        if ball.rect.y <= 0 or ball.rect.y >= 450:
+            y_speed *= -1
+        if sprite.collide_rect(ball, rocket_l) or sprite.collide_rect(ball, rocket_r):
+            x_speed *= -1
+        if ball.rect.x >= 650:
+            p1 = font.render('Player 1 lose!', True, (0, 0, 0))
+            window.blit(p1, (200, 200))
+            finish = True
+        if ball.rect.x <= 0:
+            p2 = font.render('Player 2 lose!', True, (0, 0, 0))
+            window.blit(p2, (200, 200))
+            finish = True
 
     clock.tick(FPS)
     display.update()
